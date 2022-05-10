@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+ db:
+  # dockerhub上のmysqlイメージ安定版を指定（事前ダウンロード不要）
+  image: mysql
+  # ログイン認証方式をcaching_sha2_passwordからmysql_native_passwordに変更
+  # command: --default-authentication-plugin=mysql_native_password
+  # mbind: Operation not permittedの回避の為に追加
+  # cap_add:
+  #   - SYS_NICE
+  environment:
+    MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
+    # 作成するデータベース名
+    MYSQL_DATABASE: $DB_DATABASE
+  # MySQLのデフォルトポート。左側がアプリコンテナ側。右側がDBコンテナ側  
+  ports:
+   - 3306:3306
+  # ホストとコンテナのパスをバインドマウントする。ホスト側:コンテナ側
+  volumes:
+     - my_volume:/var/lib/mysql
+ app:
+  # Dockerfileの存在するホストのパスを指定
+  build: .
+  # ポートマッピング。ホスト側:コンテナ側
+  depends_on:
+    - db
+  ports:
+    - 80:80
+  volumes:
+  # ホストとコンテナのパスをバインドさせる。sourceがホスト側、targetがコンテナ側
+    - type: bind
+      source: .
+      target: /usr/src/app
+  # コンテナでのデフォルトワーキングディレクトリの指定（ここでdocker-composeの処理が実行される。）
+  working_dir: /usr/src/app
+# ボリューム（データ永続化の為の、ホストのファイルシステム内に存在するDockerの占有領域）を設定する。
+volumes: 
+  my_volume:
