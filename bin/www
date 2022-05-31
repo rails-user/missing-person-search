@@ -1,40 +1,26 @@
-#!/usr/bin/env node
+'use strict';
 
-/**
- * Module dependencies.
- */
+const app = require('../app');
+const debug = require('debug')('missing-person-search:server');
+const http = require('http');
+//dotenvを呼び出し、.envファイルの環境変数がprocess.envで呼び出せるようになる。
+require('dotenv').config();
 
-var app = require('../app');
-var debug = require('debug')('missing-person-search:server');
-var http = require('http');
-
-/**
- * Get port from environment and store in Express.
- */
-
-var port = normalizePort(process.env.PORT || '3000');
+//PORTは本番環境のポート番号。本番環境が設定されていない場合、開発環境のポート番号3000がデフォルト値として設定されている。
+const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-/**
- * Create HTTP server.
- */
+const logger = require('../logger');
+logger.setLogger();
 
-var server = http.createServer(app);
-
-/**
- * Listen on provided port, on all network interfaces.
- */
+const server = http.createServer(app);
 
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
-/**
- * Normalize a port into a number, string, or false.
- */
-
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+  const port = parseInt(val, 10);
 
   if (isNaN(port)) {
     // named pipe
@@ -45,31 +31,30 @@ function normalizePort(val) {
     // port number
     return port;
   }
-
+  
   return false;
 }
-
-/**
- * Event listener for HTTP server "error" event.
- */
 
 function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
 
-  var bind = typeof port === 'string'
+  const bind = typeof port === 'string'
     ? 'Pipe ' + port
     : 'Port ' + port;
 
-  // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+      //エラー処理ミドルウェア使うならここは書き換える必要あるかも
+      logger.error(bind + ' requires elevated privileges');
+      //プロセスを強制終了させている。（正常終了=0ではないので、OSに1を通知している。）
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+      //エラー処理ミドルウェア使うならここは書き換える必要あるかも
+      logger.error(bind + ' is already in use');
+      //プロセスを強制終了させている。（正常終了=0ではないので、OSに1を通知している。）
       process.exit(1);
       break;
     default:
@@ -77,13 +62,9 @@ function onError(error) {
   }
 }
 
-/**
- * Event listener for HTTP server "listening" event.
- */
-
 function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
+  const addr = server.address();
+  const bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);

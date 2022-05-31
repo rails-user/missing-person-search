@@ -1,0 +1,22 @@
+<%- include('./header') %>
+<section>
+<!--あとでアイコンを設定する予定。今はリンクのみ。-->
+ソーシャルアカウントでログイン
+  <a href="/auth/login/facebook">facebook でログインする</a>
+  <a href="/auth/login/twitter">Twitter でログインする</a>
+  <a href="/auth/login/google">Google でログインする</a>
+</section>
+<section>
+  <form action="/users/login" method="post">
+    <label>
+      ログインIDまたはメールアドレスメールアドレス
+      <input type="email" name="email" />
+    </label>
+    <label>
+      パスワード
+      <input type="text" name="password" />
+    </label>
+    <input type="submit" id="login" value="ログイン" />
+  </form>
+</section>
+<%- include('./fotter') %>

@@ -1,0 +1,18 @@
+<%- include('./header') %>
+<section>
+  <!--あとでアイコンを設定する予定。今はリンクのみ。-->
+  他サイトのアカウントで会員登録する
+  <a href="/auth/register/facebook">facebookで会員登録する</a>
+  <a href="/auth/register/twitter">Twitterで会員登録する</a>
+  <a href="/auth/register/google">Googleで会員登録する</a>
+</section>
+<section>
+  <form action="/users/temp-register" method="post">
+    <label
+      >メールアドレス
+      <input type="email" name="email" />
+    </label>
+    <input type="submit" id="temp-register" value="メールアドレスで仮登録" />
+  </form>
+</section>
+<%- include('./fotter') %>
