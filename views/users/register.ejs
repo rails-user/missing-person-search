@@ -1,0 +1,28 @@
+<%- include('./header') %>
+<section>
+  <form action="/users/register" method="post">
+    <label
+      >なまえ（○文字以内）
+      <input type="text" name="name" />
+    </label>
+    <label
+      >ログインID
+      <input type="text" name="id" />
+    </label>
+    <label
+      >パスワード（○文字以内）
+      <input type="text" name="password" />
+    </label>
+    <label
+      >生年月日（半角数字で入力してください 例：20210101）
+      <input type="text" name="birthday" />
+    </label>
+    <label
+      >プロフィール画像の登録
+      <input type="file" name="file" />
+    </label>
+    <input type="submit" id="register" value="登録" />
+  </form>
+</section>
+<%- include('./fotter') %>
+

@@ -1,93 +1,39 @@
-var express = require('express');
+'use strict';
+
+const createError = require('http-errors');
+const express = require('express');
 const app = express();
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const router = require('./routes/index');
+//  dotenvを呼び出し、.envファイルの環境変数がprocess.envで呼び出せるようになる。
+require('dotenv').config();
 
-
-
-var createError = require('http-errors');
-
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-
-
-
-
-
-const Sequelize = require('sequelize');
-//config.jsonより環境変数を取得
-// const env = process.env.NODE_ENV || 'development';
-// const config = require('./config/config.json')[env];
-const config = require('./config/config.js');
-
-console.log(config.username)
-
-if (config.use_env_variable) {
-  sequelize = (process.env[config.use_env_connection_uri], config);
-}
-
-
-
-
-
-
-
-
-
-
-// view engine setup
+app.set('env', process.env.NODE_ENV);
+//  ejsの設定
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(logger('dev'));
+app.use(logger('combined'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('image'));
+//  ルーティングの呼び出し
+app.use('/', router);
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-// catch 404 and forward to error handler
+//Expressがすべてのミドルウェア関数とルートを実行して、そのいずれも応答しなかった場合に404を返す
 app.use(function(req, res, next) {
   next(createError(404));
 });
-
-// error handler
+//エラーハンドラー
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
   res.status(err.status || 500);
   res.render('error');
 });
 
 module.exports = app;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const port = 80;
-// HTTPサーバを起動する
-app.listen(port, () => {
-  console.log(`listening at http://localhost:${port}`);
-});
-
-
